@@ -16,3 +16,9 @@ node_modules/
 __pycache__/
 .venv/
 venv/
+build/
+*.o
+*.ko
+*.mod
+*.mod.c
+.tmp_versions/

@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: GPL-2.0
+#
+# Kbuild for the io_uring audit module.  The portable core sources are compiled
+# into the module directly so the exact same decode/rules/keeper logic that the
+# userspace tests exercise is what runs in-kernel.  Inclusion of userspace
+# headers is guarded by the core sources themselves (they use only libc-free
+# C99 + their own headers); the two -D flags below configure them for kernel use.
+obj-m += iou_uring.o
+iou_uring-y := iou_kmod_main.o \
+               ../core/iou_op.o \
+               ../core/iou_version.o \
+               ../core/iou_decode.o \
+               ../core/iou_rules.o \
+               ../core/iou_keeper.o
+
+# The core uses string.h/memcpy/memset; the kernel provides these via
+# <linux/string.h> only if we map them.  The module builds with -I to the
+# project includes; the core files include <string.h> which in a kernel build
+# resolves to the kernel's own compat shim.
+ccflags-y += -I$(src)/../../include
+ccflags-y += -I$(src)/../..
